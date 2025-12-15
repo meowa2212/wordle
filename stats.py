@@ -5,16 +5,20 @@ def read_file(file_path="words_five.txt"):
 
 def main():
     words = read_file()
-    occurences = dict()
-    for word in words:
-        for ch in word:
-            if ch not in occurences.keys():
-                occurences[ch] = 1
-            else:
-                occurences[ch] += 1
-    
-    print(sorted(occurences.items(), key=lambda item: item[1], reverse=True))
-    print(len(occurences.keys()))
+    # occurences = dict()
+    # for word in words:
+    #     for ch in word:
+    #         if ch not in occurences.keys():
+    #             occurences[ch] = 1
+    #         else:
+    #             occurences[ch] += 1
+
+    # print("nigga" in words)
+
+    # print(sorted(occurences.items(), key=lambda item: item[1], reverse=True))
+    # print(sorted(occurences.keys()))
+
+
 
 if __name__ == "__main__":
     main()
