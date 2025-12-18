@@ -1,6 +1,7 @@
 from collections import Counter
 from math import log2
 from wordfreq import word_frequency
+from os import system
 
 class Bot():
     def __init__(self, file_path_words="words_five.txt", file_path_entropy="entropies_2.txt"):
@@ -16,12 +17,14 @@ class Bot():
         elif choice == "y":
             self.all_entropy()
             self.save_entropies()
+        
         self.first_round = True
+        self.won = False
 
     def save_entropies(self, file_path="entropies_2.txt"):
         with open(file_path, "w+t") as file:
             for i in self.entropies:
-                file.write(f"{i[0]} {i[1]} {i[2]}\n")
+                file.write(f"{i[0]} {i[1]} {i[2]:.10f}\n")
 
     def make_pattern(self, word1, word2): # returns a pattern based on two given words
         result = [None] * 5
@@ -69,38 +72,59 @@ class Bot():
         length = len(self.words)
         done = 0
         for word in self.words:
-            entropies.append((word, self.entropy(word), word_frequency(word, "en")*10000))
+            entropies.append((word, self.entropy(word), word_frequency(word, "en")))
             done += 1
             print(f"{((done/length)*100):.3f}%")
         entropies.sort(key=lambda x: x[1], reverse=True)
         self.entropies = entropies[:]
 
     def data_screen(self):
+        system("clear")
         print(f"================= {len(self.words)} words left =================")
-        [print(f"{x[0]}: {x[1]:.3f} bits, {x[2]:.5f} freq") for x in self.entropies[0:10]]
+        [print(f"{x[0]}: {x[1]:.3f} bits, {x[2]:.10f} freq") for x in self.entropies[0:10]]
         print(f"================= {len(self.guessed)}/6 words guessed ================")
         [print(f"{x[0]}: ex {x[1]:.3f} bits, re: {x[2]:.3f} bits") for x in self.guessed]
 
+    def check_win(self):
+        if len(self.words) == 1:
+            self.won = True
+
+        system("clear")
+        print(f"================================================================")
+        print(f"                  {self.words[0]} is the answer")
+        print(f"================================================================")
+
     def round(self):
+        if self.won:
+            return 0
+        
         if self.first_round == False:
             self.all_entropy()
         else:
             self.first_round = False
 
         self.data_screen()
+
         previous_words = self.words
-        guess = input("guess: ")
+        guess = input("  guess: ")
         entropy = self.entropy(guess)
         pattern = input("pattern: ")
+
         self.limit(guess, pattern)
+
         self.guessed.append((guess, entropy, log2(len(previous_words)/len(self.words))))
 
-def main():
-    game = Bot()
-    while True:
-        game.round()
-    
+        self.check_win()
 
+    def play(self):
+        while self.won == False:
+            self.round()
+
+def main():
+    while True:
+        game = Bot()
+        game.play()
+        input("Start a new game: ")
 
 if __name__ == "__main__":
     main()
