@@ -8,12 +8,15 @@ class Bot():
         with open(file_path_words, "r+t") as file:
             self.words = file.read().split()
         self.guessed = []
+
         choice = input("Calculate new entropies (y/N): ").lower()
+        
         if choice in ["n", "", " "]:
             with open(file_path_entropy, "r+t") as file:    
                 entropies = file.read().split("\n")
             entropies = [x.split() for x in entropies[:len(entropies)-1]]
             self.entropies = [(x[0], float(x[1]), float(x[2])) for x in entropies]
+        
         elif choice == "y":
             self.all_entropy()
             self.save_entropies()
