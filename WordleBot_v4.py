@@ -1,5 +1,5 @@
 from collections import Counter
-from math import log2
+from math import log2, log10
 from wordfreq import word_frequency
 from os import system
 
@@ -78,15 +78,26 @@ class Bot():
             entropies.append((word, self.entropy(word), word_frequency(word, "en")))
             done += 1
             print(f"{((done/length)*100):.3f}%")
-        entropies.sort(key=lambda x: x[1], reverse=True)
+        entropies.sort(key=lambda x: self.worth(x[0]), reverse=True)
         self.entropies = entropies[:]
+
+    def worth(self, guess):
+        w = 300
+        freq = word_frequency(guess, "en")
+        if len(self.words) < 10:
+            worth = freq * 10000
+        elif len(self.guessed) > 2:
+            worth = self.entropy(guess) + freq * len(self.guessed) * w
+        else:
+            worth = self.entropy(guess)
+        return worth
 
     def data_screen(self):
         system("clear")
         print(f"================= {len(self.words)} words left =================")
-        [print(f"{x[0]}: {x[1]:.3f} bits, {x[2]:.10f} freq") for x in self.entropies[0:10]]
+        [print(f"{x[0]}: {x[1]:.3f} bits, {x[2]:.10f} freq, worth: {self.worth(x[0])}") for x in self.entropies[0:10]]
         print(f"================= {len(self.guessed)}/6 words guessed ================")
-        [print(f"{x[0]}: ex {x[1]:.3f} bits, re: {x[2]:.3f} bits") for x in self.guessed]
+        [print(f"{x[0]}: ex {x[1]:.3f} bits, re: {x[2]:.3f} bits, worth: {self.worth(x[0])}") for x in self.guessed]
 
     def check_win(self):
         if len(self.words) == 1:
