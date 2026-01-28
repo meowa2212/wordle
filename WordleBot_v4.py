@@ -97,7 +97,7 @@ class Bot():
         print(f"================= {len(self.words)} words left =================")
         [print(f"{x[0]}: {x[1]:.3f} bits, {x[2]:.10f} freq, worth: {self.worth(x[0])}") for x in self.entropies[0:10]]
         print(f"================= {len(self.guessed)}/6 words guessed ================")
-        [print(f"{x[0]}: ex {x[1]:.3f} bits, re: {x[2]:.3f} bits, worth: {self.worth(x[0])}") for x in self.guessed]
+        [print(f"{x[0]}: ex {x[1]:.3f} bits, re: {x[2]:.3f} bits, {x[2]:.10f} freq") for x in self.guessed]
 
     def check_win(self):
         if len(self.words) == 1:
@@ -135,9 +135,12 @@ class Bot():
             self.round()
 
 def main():
+    wins = [] #list of stages in which the bot won
     while True:
         game = Bot()
         game.play()
+        wins.append(len(game.guessed))
+        print(f"average: {sum(wins)/len(wins)}")
         input("Start a new game: ")
 
 if __name__ == "__main__":
