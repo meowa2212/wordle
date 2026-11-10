@@ -84,7 +84,7 @@ class Bot():
     def worth(self, guess):
         w = 300
         freq = word_frequency(guess, "en")
-        if len(self.words) < 10:
+        if len(self.words) < 20:
             worth = freq * 10000
         elif len(self.guessed) > 2:
             worth = self.entropy(guess) + freq * len(self.guessed) * w
